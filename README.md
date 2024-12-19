@@ -1,10 +1,14 @@
 # DevOps Challenge
 
-This repository contains a simple Django application; a voting application.
+This repository contains a simple Flask application.
 It uses PostgreSQL as the database of choice.
 
-## Notes
+Application has two endpoints:
+- `/users` that list users
+- `/health` for healthcheck
 
-* docker-compose.yml is present so that you can see how to extrapolate the services towards kubernetes.
-* Dockerfile is missing on purpose as part of the challenge. We want to see docker knowledge from the DevOps.
-* Take into consideration on the Dockerfile creation the requirements.txt.
+Database schema is provided in file `source/init.sql`. You can use it to create a database schema.
+
+Dockerize the application and push it to your choice public Docker Registry.
+Deploy this application along with Postgres database to a provided Kubernetes cluster.
+For deployment, choose Terraform, Ansible, or both.
