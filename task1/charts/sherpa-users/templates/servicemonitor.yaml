@@ -1,0 +1,20 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "sherpa-users.fullname" . }}
+  namespace: monitoring
+  labels:
+    release: prometheus
+spec:
+  endpoints:
+  - interval: 30s
+    port: http
+    targetPort: http
+    path: /metrics
+  namespaceSelector:
+    matchNames:
+    - sherpa-app
+  selector:
+    matchLabels:
+    {{- include "sherpa-users.selectorLabels" . | nindent 6 }}
+
