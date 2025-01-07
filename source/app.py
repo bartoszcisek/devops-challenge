@@ -3,8 +3,10 @@ from flask import Flask, jsonify
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from prometheus_flask_exporter import PrometheusMetrics, NO_PREFIX
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app, defaults_prefix=NO_PREFIX)
 
 def get_db_connection():
     conn = psycopg2.connect(
