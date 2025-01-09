@@ -30,12 +30,47 @@ spec:
       serviceAccountName: {{ include "sherpa-users.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: init-schema
+          image: postgres:13
+          env:
+            - name: PGUSER
+              value: {{ .Values.postgresql.username }}
+            - name: PGDATABASE
+              value: {{ .Values.postgresql.database }}
+            - name: PGHOST
+              value: {{ .Values.postgresql.hostname }}
+            - name: PGPORT
+              value: "{{ .Values.postgresql.port }}"
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sherpa-pgsql-postgresql
+                  key: password
+          command: [ 'sh', '-c', 'psql -f /docker-entrypoint-initdb.d/init.sql' ]
+          volumeMounts:
+            - mountPath: "/docker-entrypoint-initdb.d/"
+              name: config-volume
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PGUSER
+              value: {{ .Values.postgresql.username }}
+            - name: PGDATABASE
+              value: {{ .Values.postgresql.database }}
+            - name: PGHOST
+              value: {{ .Values.postgresql.hostname }}
+            - name: PGPORT
+              value: "{{ .Values.postgresql.port }}"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: sherpa-pgsql-postgresql
+                  key: password
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -50,10 +85,10 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.volumes }}
       volumes:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        - name: config-volume
+          configMap:
+            name: {{ include "sherpa-users.fullname" . }}-configmap
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
