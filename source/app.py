@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -7,6 +7,7 @@ from prometheus_flask_exporter import PrometheusMetrics, NO_PREFIX
 
 app = Flask(__name__)
 metrics = PrometheusMetrics(app, defaults_prefix=NO_PREFIX)
+hist = metrics.histogram('db_query_duration_seconds', 'DB query duration histogram', labels={'endpoint': lambda: request.endpoint})
 
 def get_db_connection():
     conn = psycopg2.connect(
@@ -23,7 +24,8 @@ def get_users():
     conn = get_db_connection()
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute('SELECT id, name, email FROM users')
+            with hist.time():
+                cur.execute('SELECT id, name, email FROM users')
             users = cur.fetchall()
             return jsonify([dict(user) for user in users])
     finally:
