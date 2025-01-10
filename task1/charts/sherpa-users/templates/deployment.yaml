@@ -58,15 +58,15 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
-            - name: PGUSER
+            - name: DB_USER
               value: {{ .Values.postgresql.username }}
-            - name: PGDATABASE
+            - name: DB_NAME
               value: {{ .Values.postgresql.database }}
-            - name: PGHOST
+            - name: DB_HOST
               value: {{ .Values.postgresql.hostname }}
-            - name: PGPORT
+            - name: DB_PORT
               value: "{{ .Values.postgresql.port }}"
-            - name: POSTGRES_PASSWORD
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: sherpa-pgsql-postgresql

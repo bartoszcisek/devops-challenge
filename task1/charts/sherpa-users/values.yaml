@@ -63,7 +63,7 @@ ingress:
     - host: 2252b309-fed9-4515-99e0-5ecdb6e6ac3e.k8s.civo.com
       paths:
         - path: /users
-          pathType: ImplementationSpecific
+          pathType: Prefix
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
