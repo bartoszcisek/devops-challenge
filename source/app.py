@@ -8,7 +8,7 @@ from psycopg2.extras import RealDictCursor
 from prometheus_flask_exporter import PrometheusMetrics, NO_PREFIX, Histogram
 
 app = Flask(__name__)
-metrics = PrometheusMetrics(app, defaults_prefix=NO_PREFIX)
+metrics = PrometheusMetrics(app)
 hist = Histogram('db_query_duration_seconds', 'DB query duration histogram')
 
 def get_db_connection():
