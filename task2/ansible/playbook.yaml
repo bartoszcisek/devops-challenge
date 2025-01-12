@@ -1,0 +1,43 @@
+---
+- name: "Deploy grafana agent"
+  hosts: all
+  become: true
+  vars:
+    grafana_agent_metrics_config:
+      global:
+        external_labels:
+          instance: "{{ ansible_host }}"
+        remote_write:
+          - url: "{{ prometheus_remote_endpoint }}"
+    grafana_agent_integrations_config:
+      scrape_integrations: true
+      # get metrics about the agent
+      agent:
+        enabled: true
+        relabel_configs: []
+        metric_relabel_configs: []
+      # get node exporter metrics
+      node_exporter:
+        enabled: true
+        relabel_configs: []
+        metric_relabel_configs: []
+
+  # pre_tasks happen before roles are executed / applied
+  pre_tasks: []
+  # roles are ran after pre_tasks
+  roles:
+    - grafana.grafana.grafana_agent
+  # tasks are ran after roles
+  tasks: []
+- name: "Deploy grafana dashboard"
+  hosts: all
+  tasks:
+    - name: "Deploy node exporter dashboard"
+      community.grafana.grafana_dashboard:
+        grafana_url: "{{ grafana_remote_endpoint }}"
+        grafana_api_key: "{{ grafana_service_account_token }}"
+        state: present
+        folder: "sherpa_app"
+        dashboard_id: 1860
+        dashboard_revision: 37
+        overwrite: true

@@ -15,13 +15,17 @@ terraform {
   }
 }
 
+locals {
+  config_file = "../../../k8s-credentials"
+}
+
 provider "kubernetes" {
-  config_path    = "../../../k8s-credentials"
+  config_path    = local.config_file
   config_context = "bartoszcisek"
 }
 
 provider "helm" {
   kubernetes {
-    config_path    = "../../../k8s-credentials"
+    config_path    = local.config_file
   }
 }
