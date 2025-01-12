@@ -52,3 +52,12 @@ resource "helm_release" "sherpa_pgsql" {
     value = random_password.postgres_admin_password.result
   }
 }
+
+resource "helm_release" "sherpa_app" {
+  chart = "../charts/sherpa-users"
+  name  = "sherpa-app"
+  namespace = kubernetes_namespace.sherpa_app.metadata.0.name
+  depends_on = [
+    helm_release.sherpa_pgsql
+  ]
+}
