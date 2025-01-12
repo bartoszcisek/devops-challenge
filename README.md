@@ -53,3 +53,5 @@ Grafana agent is deployed to Kubernetes cluster using Ansible.
 ansible-galaxy collection install grafana.grafana --force
 ansible-playbook -i inventory/inventory.ini playbook.yaml --vault-pass-file secret.pass
 ```
+## Grafana dashboard
+Grafana dashboard is available in separate folder [sherpa_app](http://2252b309-fed9-4515-99e0-5ecdb6e6ac3e.k8s.civo.com:30080/dashboards/f/ae9i80e14fbi8a/sherpa-app).
